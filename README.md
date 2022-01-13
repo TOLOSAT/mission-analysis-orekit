@@ -1,18 +1,11 @@
-## Getting Started
+![Orekit logo](https://www.orekit.org/img/orekit-logo.png)
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+This is Tolosat's Orekit project.
 
-## Folder Structure
+The quick test script propagates an orbit using a Eckstein Hechler Propagator and saves the results to the "testfile.txt" file.
 
-The workspace contains two folders by default, where:
+## License
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
-
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+Orekit tutorials are licensed by [CS GROUP](https://www.csgroup.eu/) under
+the [Apache License, version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
+A copy of this license is provided in the [LICENSE.txt](LICENSE.txt) file.
