@@ -117,7 +117,7 @@ public class QuickTestClass{
         try {
             FileWriter myWriter = new FileWriter("testfile.txt");
             
-            myWriter.write(" Semi-Major Axis ; Eccentricity ; Inclination ; Argument of the pergiee ; Right Ascension of the Ascending node\n");
+            myWriter.write(" Semi-Major Axis ; Eccentricity ; Inclination ; Argument of the perigee ; Right Ascension of the Ascending node\n");
 
             //Get values from ephemeris
             
