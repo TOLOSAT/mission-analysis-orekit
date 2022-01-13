@@ -2,8 +2,6 @@
 
 This is Tolosat's Orekit project.
 
-The quick test script propagates an orbit using a Eckstein Hechler Propagator and saves the results to the "testfile.txt" file.
-
 ## License
 
 Orekit tutorials are licensed by [CS GROUP](https://www.csgroup.eu/) under
