@@ -80,21 +80,24 @@ public class QuickTestClass{
 	    double	gom = 1;//CL_op_locTime(cjd0, "mlh", mlh, "ra")
 		double	anm = 0;
 		
-		
+		//Orbit Initialization
 		Orbit initialOrbit = new KeplerianOrbit(sma,ecc,inc,pom,gom,anm,PositionAngle.MEAN, FramesFactory.getEME2000(), initialDate,
                 Constants.EIGEN5C_EARTH_MU);
 		
 		int time_step = 8600; // in seconds
 		int duration =  365*86400;// in seconds
 		
+		//State Initialization
 		final SpacecraftState initialState = new SpacecraftState(initialOrbit);
 		
+		//Propagator definition as an Eckstein-Heckler Propagator 
 		final EcksteinHechlerPropagator propagator = new EcksteinHechlerPropagator(initialOrbit,
                 Constants.EIGEN5C_EARTH_EQUATORIAL_RADIUS,
                 Constants.EIGEN5C_EARTH_MU, Constants.EIGEN5C_EARTH_C20,
                 Constants.EIGEN5C_EARTH_C30, Constants.EIGEN5C_EARTH_C40,
                 Constants.EIGEN5C_EARTH_C50, Constants.EIGEN5C_EARTH_C60);
 		
+		//Definition of an Ephemeris Generator, to get the intermediate results of the propagation
 		final EphemerisGenerator generator = propagator.getEphemerisGenerator();
 	
 
@@ -103,29 +106,28 @@ public class QuickTestClass{
 	
 		
         //Create Ephemeris
-        
         final BoundedPropagator ephemeris = generator.getGeneratedEphemeris();
         
         System.out.format("%nEphemeris defined from %s to %s%n", ephemeris.getMinDate(), ephemeris.getMaxDate());
         
-        
+        //Initialization of list of orbit ephemeris 
         ArrayList<KeplerianOrbit> orbitList = new ArrayList<>();
-        ArrayList<String> dataLines = new ArrayList<>();
        
         double interArgPer  = 0;
         
+        //Writing the results to a text file
         try {
+        	
             FileWriter myWriter = new FileWriter("testfile.txt");
-            
+            //Writing Header
             myWriter.write(" Semi-Major Axis ; Eccentricity ; Inclination ; Argument of the perigee ; Right Ascension of the Ascending node\n");
 
             //Get values from ephemeris
-            
         for (int i = 0; i < duration/time_step; i= i + 1)	{
         	AbsoluteDate intermediateDate = initialDate.shiftedBy(time_step*i);
             SpacecraftState intermediateState = ephemeris.propagate(intermediateDate);
             orbitList.add(new KeplerianOrbit(intermediateState.getOrbit()));
-            dataLines.add((String.valueOf(orbitList.get(i).getA())));
+            
             //Normalize Argument of the Perigee
             if (orbitList.get(i).getRightAscensionOfAscendingNode() < - 2*Math.PI) {
             	interArgPer = orbitList.get(i).getRightAscensionOfAscendingNode() + 2*Math.PI;
@@ -136,6 +138,7 @@ public class QuickTestClass{
             else {
             	interArgPer = orbitList.get(i).getRightAscensionOfAscendingNode();
             }
+            
             //Print to File
             System.out.println(orbitList.get(i).getA()); 
             myWriter.write(String.valueOf(orbitList.get(i).getA()) + ";" + String.valueOf(orbitList.get(i).getE()) + ";" + String.valueOf(orbitList.get(i).getI()) + ";" + String.valueOf(interArgPer) + ";" + String.valueOf(orbitList.get(i).getRightAscensionOfAscendingNode()) + "\n");
@@ -148,7 +151,6 @@ public class QuickTestClass{
           }
             
         System.out.println("Successfully wrote to the file.");
-        System.out.println(ephemeris.getManagedAdditionalStates());
 		}
 		
 		catch (OrekitException oe) {
