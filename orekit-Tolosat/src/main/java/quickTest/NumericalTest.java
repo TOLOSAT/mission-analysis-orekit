@@ -77,7 +77,7 @@ public class NumericalTest {
             // Initial orbit
             final double a = 6878.e3; // semi major axis in meters
             final double e = 2.e-2; // eccentricity
-            final double i = 94*Math.PI/180; // inclination
+            final double i = 97.4009688*Math.PI/180; // inclination
             final double omega =Math.PI/2; // perigee argument
             final double raan = 0; // right ascention of ascending node
             final double lM = 0; // mean anomaly
@@ -85,13 +85,13 @@ public class NumericalTest {
                           inertialFrame, initialDate, mu);
 
             int datastep = 100; // in seconds
-    		int duration =  365*86400;// in seconds
+    		int duration =  1600*86400;// in seconds
             
             // Initial state definition
             final SpacecraftState initialState = new SpacecraftState(initialOrbit);
 
             // Adaptive step integrator with a minimum step of 0.001 and a maximum step of 1000
-            final double minStep = 0.001;
+            final double minStep = 0.01;
             final double maxstep = 1000.0;
             final double positionTolerance = 10.0;
             final OrbitType propagationType = OrbitType.KEPLERIAN;
@@ -132,7 +132,7 @@ public class NumericalTest {
                               FastMath.toDegrees(o.getRightAscensionOfAscendingNode()),
                               FastMath.toDegrees(o.getTrueAnomaly()));
             
-            WriteToFile writetofile = new WriteToFile("numericaltest.txt",datastep);
+            new WriteToFile("numericaltest.txt",datastep);
             
         } catch (OrekitException oe) {
             System.err.println(oe.getLocalizedMessage());
