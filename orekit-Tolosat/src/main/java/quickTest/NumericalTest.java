@@ -3,6 +3,7 @@ package quickTest;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import org.hipparchus.ode.nonstiff.AdaptiveStepsizeIntegrator;
@@ -45,6 +46,8 @@ public class NumericalTest {
     /** Program entry point.
      * @param args program arguments (unused here)
      */
+    static ArrayList<KeplerianOrbit> orbitList = new ArrayList<>();
+    
     public static void main(final String[] args) {
         try {
 
@@ -81,7 +84,7 @@ public class NumericalTest {
             final Orbit initialOrbit = new KeplerianOrbit(a, e, i, omega, raan, lM, PositionAngle.MEAN,
                           inertialFrame, initialDate, mu);
 
-            int time_step = 8600; // in seconds
+            int datastep = 100; // in seconds
     		int duration =  365*86400;// in seconds
             
             // Initial state definition
@@ -128,7 +131,9 @@ public class NumericalTest {
                               FastMath.toDegrees(o.getPerigeeArgument()),
                               FastMath.toDegrees(o.getRightAscensionOfAscendingNode()),
                               FastMath.toDegrees(o.getTrueAnomaly()));
-
+            
+            WriteToFile writetofile = new WriteToFile("numericaltest.txt",datastep);
+            
         } catch (OrekitException oe) {
             System.err.println(oe.getLocalizedMessage());
         }
@@ -150,18 +155,8 @@ public class NumericalTest {
         /** {@inheritDoc} */
         @Override
         public void init(final SpacecraftState s0, final AbsoluteDate t, final double step) {
-        	 try {
-        		this.myWriter = new FileWriter("numericaltestfile.txt");
-        		 myWriter.write("          date                a           e" +
-                         "           i         \u03c9          \u03a9" +
-                         "          \u03bd \n");
         		 System.out.println("File initialized");
-        	 }
-        	 catch (IOException e) {
-                 System.out.println("An error occurred.");
-                 e.printStackTrace();
-               }
-        	System.out.println("          date                a           e" +
+        		 System.out.println("          date                a           e" +
                                "           i         \u03c9          \u03a9" +
                                "          \u03bd");
         }
@@ -177,34 +172,44 @@ public class NumericalTest {
                               FastMath.toDegrees(o.getPerigeeArgument()),
                               FastMath.toDegrees(o.getRightAscensionOfAscendingNode()),
                               FastMath.toDegrees(o.getTrueAnomaly()));
-            try {
-            	 this.myWriter.write(String.valueOf(o.getA()) + ";"
-            			 + String.valueOf(o.getE()) + ";" 
-            			 + String.valueOf(FastMath.toDegrees(o.getI())) + ";" 
-            			 + String.valueOf(FastMath.toDegrees(o.getPerigeeArgument())) + ";" 
-            			 + String.valueOf(FastMath.toDegrees(o.getTrueAnomaly())) + "\n");
-                 
-            }
-            catch (IOException e) {
-                System.out.println("An error occurred.");
-                e.printStackTrace();
-              }
+            orbitList.add(o);
         }
 
         /** {@inheritDoc} */
         @Override
         public void finish(final SpacecraftState finalState) {
-        	try {
-        		 myWriter.close();
-        	 }
-        	 catch (IOException e) {
-                 System.out.println("An error occurred.");
-                 e.printStackTrace();
-               }
             System.out.println("this was the last step ");
             System.out.println();
         }
 
     }
 
+    private static class WriteToFile{
+    	
+     WriteToFile(String filename, int dataStep) {
+    		 try {
+    			 FileWriter myWriter = new FileWriter(filename);
+    			 int i = -1;
+    			 int previ = 0;
+    			 for(KeplerianOrbit o : orbitList) {
+    				 i += 1;
+    				 if( i-previ == 0 || i-previ == dataStep) {
+    					 myWriter.write(String.valueOf(o.getA()) + ";"
+    					     + String.valueOf(o.getE()) + ";" 
+    					     + String.valueOf(FastMath.toDegrees(o.getI())) + ";" 
+    					     + String.valueOf(FastMath.toDegrees(o.getPerigeeArgument())) + ";" 
+    					     + String.valueOf(FastMath.toDegrees(o.getTrueAnomaly())) + "\n");
+    					 previ = i;
+    				 }
+    			 }
+    			 myWriter.close();
+    			 
+    		 }
+    		 catch (IOException e) {
+                 System.out.println("An error occurred.");
+                 e.printStackTrace();
+               }
+    	    }
+    	
+    }
 }
