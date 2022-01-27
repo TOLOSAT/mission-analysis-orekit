@@ -1,8 +1,10 @@
 package quickTest;
 
 
+import java.awt.Color;
 import java.io.File;
-
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -21,8 +23,8 @@ import org.orekit.propagation.analytical.EcksteinHechlerPropagator;
 import org.orekit.time.AbsoluteDate;
 import org.orekit.time.TimeScalesFactory;
 import org.orekit.utils.Constants;
-import java.io.FileWriter;
-import java.io.IOException;
+
+import quickTest.Plot;
 
 public class QuickTestClass{
     
@@ -127,8 +129,34 @@ public class QuickTestClass{
             System.out.println("An error occurred.");
             e.printStackTrace();
           }
+        
             
         System.out.println("Successfully wrote to the file.");
+        Plot.Data data = Plot.data();
+        int i=0;
+        for (KeplerianOrbit o:orbitList) {
+        	data.xy(i, o.getRightAscensionOfAscendingNode());
+        	i++;
+        }
+        
+        Plot plot = Plot.plot(Plot.plotOpts().
+        		title("testAnalyticalgomPlot").
+        		legend(Plot.LegendFormat.BOTTOM)).
+        	xAxis("x", Plot.axisOpts()).
+        	yAxis("y", Plot.axisOpts()).
+        	series("Data", data,
+        		Plot.seriesOpts().
+        			marker(Plot.Marker.DIAMOND).
+        			markerColor(Color.GREEN).
+        			color(Color.BLACK));
+        try {
+        	plot.save("plots/PlotTest", "png");
+        }
+        catch (IOException e){
+                System.out.println("An error occurred.");
+                e.printStackTrace();
+              }
+        System.out.println("Successfully created plot.");
 		}
 		
 		catch (OrekitException oe) {

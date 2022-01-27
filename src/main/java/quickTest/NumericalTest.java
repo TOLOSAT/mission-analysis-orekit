@@ -84,8 +84,8 @@ public class NumericalTest {
             final Orbit initialOrbit = new KeplerianOrbit(a, e, i, omega, raan, lM, PositionAngle.MEAN,
                           inertialFrame, initialDate, mu);
 
-            int datastep = 100; // in seconds
-    		int duration =  200*86400;// in seconds
+            int datastep = 100; // in seconds (timeStep between recorded data on textfile)
+    		int duration = 1600*86400;// in seconds
             
             // Initial state definition
             final SpacecraftState initialState = new SpacecraftState(initialOrbit);
