@@ -2,6 +2,10 @@
 
 This is Tolosat's Orekit project.
 
+## Plotting test
+
+![Argument of the ascending node plot](mission-analysis-orekit/plots/PlotTest.png)
+
 ## License
 
 Orekit tutorials are licensed by [CS GROUP](https://www.csgroup.eu/) under
