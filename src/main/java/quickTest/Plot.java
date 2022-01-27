@@ -1,4 +1,4 @@
-package com.github.plot;
+package quickTest;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -1027,3 +1027,4 @@ public class Plot {
 	}
 	
 }
+
