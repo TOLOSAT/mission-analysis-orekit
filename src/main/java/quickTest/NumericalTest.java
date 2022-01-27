@@ -85,7 +85,7 @@ public class NumericalTest {
                           inertialFrame, initialDate, mu);
 
             int datastep = 100; // in seconds
-    		int duration =  1600*86400;// in seconds
+    		int duration =  200*86400;// in seconds
             
             // Initial state definition
             final SpacecraftState initialState = new SpacecraftState(initialOrbit);
@@ -164,13 +164,13 @@ public class NumericalTest {
         @Override
         public void handleStep(final SpacecraftState currentState) {
             final KeplerianOrbit o = (KeplerianOrbit) OrbitType.KEPLERIAN.convertType(currentState.getOrbit());
-            System.out.format(Locale.US, "%s %12.3f %10.8f %10.6f %10.6f %10.6f %10.6f%n",
-                              currentState.getDate(),
-                              o.getA(), o.getE(),
-                              FastMath.toDegrees(o.getI()),
-                              FastMath.toDegrees(o.getPerigeeArgument()),
-                              FastMath.toDegrees(o.getRightAscensionOfAscendingNode()),
-                              FastMath.toDegrees(o.getTrueAnomaly()));
+            //System.out.format(Locale.US, "%s %12.3f %10.8f %10.6f %10.6f %10.6f %10.6f%n",
+              //                currentState.getDate(),
+              //                o.getA(), o.getE(),
+              //                FastMath.toDegrees(o.getI()),
+              //                FastMath.toDegrees(o.getPerigeeArgument()),
+              //                FastMath.toDegrees(o.getRightAscensionOfAscendingNode()),
+              //                FastMath.toDegrees(o.getTrueAnomaly()));
             orbitList.add(o);
         }
 
