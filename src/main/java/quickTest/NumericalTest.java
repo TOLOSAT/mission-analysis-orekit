@@ -132,7 +132,7 @@ public class NumericalTest {
                               FastMath.toDegrees(o.getRightAscensionOfAscendingNode()),
                               FastMath.toDegrees(o.getTrueAnomaly()));
             
-            new WriteToFile("numericaltest.txt",datastep);
+            new WriteToFile("output/numericaltest.txt",datastep);
             
         } catch (OrekitException oe) {
             System.err.println(oe.getLocalizedMessage());
