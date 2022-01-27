@@ -1,48 +1,26 @@
 package quickTest;
 
-import java.awt.List;
 
 import java.io.File;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
-import org.hipparchus.geometry.euclidean.threed.RotationOrder;
-import org.hipparchus.geometry.euclidean.threed.Vector3D;
-import org.hipparchus.util.FastMath;
-import org.orekit.attitudes.AttitudeProvider;
-import org.orekit.attitudes.AttitudesSequence;
-import org.orekit.attitudes.LofOffset;
-import org.orekit.bodies.CelestialBodyFactory;
-import org.orekit.bodies.OneAxisEllipsoid;
 import org.orekit.data.DataContext;
 import org.orekit.data.DataProvidersManager;
 import org.orekit.data.DirectoryCrawler;
 import org.orekit.errors.OrekitException;
 import org.orekit.frames.FramesFactory;
-import org.orekit.frames.LOFType;
 import org.orekit.orbits.KeplerianOrbit;
 import org.orekit.orbits.Orbit;
 import org.orekit.orbits.PositionAngle;
 import org.orekit.propagation.BoundedPropagator;
 import org.orekit.propagation.EphemerisGenerator;
-import org.orekit.propagation.Propagator;
 import org.orekit.propagation.SpacecraftState;
 import org.orekit.propagation.analytical.EcksteinHechlerPropagator;
-import org.orekit.propagation.events.EclipseDetector;
-import org.orekit.propagation.events.EventDetector;
-import org.orekit.propagation.events.handlers.ContinueOnEvent;
 import org.orekit.time.AbsoluteDate;
 import org.orekit.time.TimeScalesFactory;
-import org.orekit.utils.AngularDerivativesFilter;
 import org.orekit.utils.Constants;
-import org.orekit.utils.IERSConventions;
-import org.orekit.utils.PVCoordinates;
-import org.orekit.utils.PVCoordinatesProvider;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -118,7 +96,7 @@ public class QuickTestClass{
         //Writing the results to a text file
         try {
         	
-            FileWriter myWriter = new FileWriter("testfile.txt");
+            FileWriter myWriter = new FileWriter("output/testfile.txt");
             //Writing Header
             myWriter.write(" Semi-Major Axis ; Eccentricity ; Inclination ; Argument of the perigee ; Right Ascension of the Ascending node\n");
 
