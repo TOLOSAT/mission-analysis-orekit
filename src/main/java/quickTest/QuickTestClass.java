@@ -140,7 +140,7 @@ public class QuickTestClass{
         }
         
         Plot plot = Plot.plot(Plot.plotOpts().
-        		title("testAnalyticalgomPlot").
+        		title("Right Ascension of Ascending Node").
         		legend(Plot.LegendFormat.BOTTOM)).
         	xAxis("x", Plot.axisOpts()).
         	yAxis("y", Plot.axisOpts()).
