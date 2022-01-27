@@ -146,8 +146,6 @@ public class QuickTestClass{
         	yAxis("y", Plot.axisOpts()).
         	series("Data", data,
         		Plot.seriesOpts().
-        			marker(Plot.Marker.DIAMOND).
-        			markerColor(Color.GREEN).
         			color(Color.BLACK));
         try {
         	plot.save("plots/PlotTest", "png");
