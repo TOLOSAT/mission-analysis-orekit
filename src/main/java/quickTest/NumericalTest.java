@@ -90,7 +90,7 @@ public class NumericalTest {
             // Initial state definition
             final SpacecraftState initialState = new SpacecraftState(initialOrbit);
 
-            // Adaptive step integrator with a minimum step of 0.001 and a maximum step of 1000
+            // Adaptive step integrator with a minimum step of 0.01 and a maximum step of 1000
             final double minStep = 0.01;
             final double maxstep = 1000.0;
             final double positionTolerance = 10.0;
@@ -111,7 +111,7 @@ public class NumericalTest {
                     new HolmesFeatherstoneAttractionModel(FramesFactory.getITRF(IERSConventions.IERS_2010,
                                                                                 true),
                                                           provider);
-
+     
             // Add force model to the propagator
             propagator.addForceModel(holmesFeatherstone);
 
