@@ -4,7 +4,7 @@ This is Tolosat's Orekit project.
 
 ## Plotting test
 
-![Argument of the ascending node plot](mission-analysis-orekit/plots/PlotTest.png)
+![Argument of the ascending node plot](plots/PlotTest.png)
 
 ## License
 
