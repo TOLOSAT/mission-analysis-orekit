@@ -6,7 +6,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import org.orekit.data.DataContext;
 import org.orekit.data.DataProvidersManager;
@@ -28,10 +30,32 @@ import quickTest.Plot;
 
 public class QuickTestClass{
     
-
-
+	public static void plot(List<Double> yList, String plotName, String fileName) {
+		Plot.Data data = Plot.data();
+        int i=0;
+        for (double y:yList) {
+        	data.xy(i, y);
+        	i++;
+        }
+        
+        Plot plot = Plot.plot(Plot.plotOpts().
+        		title(plotName).
+        		legend(Plot.LegendFormat.BOTTOM)).
+        	xAxis("x", Plot.axisOpts()).
+        	yAxis("y", Plot.axisOpts()).
+        	series(null, data,
+        		Plot.seriesOpts().
+        			color(Color.BLACK));
+        try {
+        	plot.save("plots/" + fileName, "png");
+        }
+        catch (IOException e){
+                System.out.println("An error occurred.");
+                e.printStackTrace();
+              }
+        System.out.println("Successfully created plot " + fileName);
+	}
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		try {
 
             // configure Orekit
@@ -94,14 +118,14 @@ public class QuickTestClass{
         ArrayList<KeplerianOrbit> orbitList = new ArrayList<>();
        
         double interArgPer  = 0;
-        
+        List<Double> ArgPerList = new ArrayList<>();
         //Writing the results to a text file
         try {
         	
             FileWriter myWriter = new FileWriter("output/testfile.txt");
             //Writing Header
             myWriter.write(" Semi-Major Axis ; Eccentricity ; Inclination ; Argument of the perigee ; Right Ascension of the Ascending node\n");
-
+            
             //Get values from ephemeris
         for (int i = 0; i < duration/time_step; i= i + 1)	{
         	AbsoluteDate intermediateDate = initialDate.shiftedBy(time_step*i);
@@ -118,7 +142,7 @@ public class QuickTestClass{
             else {
             	interArgPer = orbitList.get(i).getRightAscensionOfAscendingNode();
             }
-            
+            ArgPerList.add(interArgPer);
             //Print to File
             System.out.println(orbitList.get(i).getA()); 
             myWriter.write(String.valueOf(orbitList.get(i).getA()) + ";" + String.valueOf(orbitList.get(i).getE()) + ";" + String.valueOf(orbitList.get(i).getI()) + ";" + String.valueOf(interArgPer) + ";" + String.valueOf(orbitList.get(i).getRightAscensionOfAscendingNode()) + "\n");
@@ -129,32 +153,44 @@ public class QuickTestClass{
             System.out.println("An error occurred.");
             e.printStackTrace();
           }
+        List<Double> AList = orbitList.stream().map(KeplerianOrbit::getA).collect(Collectors.toList());
+        plot(AList, "Semi Major Axis" ,"AnalyticalA");	
         
-            
+        List<Double> EList = orbitList.stream().map(KeplerianOrbit::getE).collect(Collectors.toList());
+        plot(EList, "Eccentricity" ,"AnalyticalE");	
+        
+        List<Double> IList = orbitList.stream().map(KeplerianOrbit::getI).collect(Collectors.toList());
+        plot(IList, "Inclination" ,"AnalyticalI");	
+        
+        plot(ArgPerList, "Argument of the Perigee" ,"AnalyticalAP");	
+
+        List<Double> RaanList = orbitList.stream().map(KeplerianOrbit::getRightAscensionOfAscendingNode).collect(Collectors.toList());
+        plot(RaanList, "Right Ascension of Ascending Node" ,"AnalyticalRaan");						
+        
         System.out.println("Successfully wrote to the file.");
-        Plot.Data data = Plot.data();
-        int i=0;
-        for (KeplerianOrbit o:orbitList) {
-        	data.xy(i, o.getRightAscensionOfAscendingNode());
-        	i++;
-        }
+      
+        //Plot.Data data = Plot.data();
+       // int i=0;
+       // for (KeplerianOrbit o:orbitList) {
+       // 	data.xy(i, o.getRightAscensionOfAscendingNode());
+       // 	i++;
+       // }
         
-        Plot plot = Plot.plot(Plot.plotOpts().
-        		title("Right Ascension of Ascending Node").
-        		legend(Plot.LegendFormat.BOTTOM)).
-        	xAxis("x", Plot.axisOpts()).
-        	yAxis("y", Plot.axisOpts()).
-        	series("Data", data,
-        		Plot.seriesOpts().
-        			color(Color.BLACK));
-        try {
-        	plot.save("plots/PlotTest", "png");
-        }
-        catch (IOException e){
-                System.out.println("An error occurred.");
-                e.printStackTrace();
-              }
-        System.out.println("Successfully created plot.");
+       // Plot plot = Plot.plot(Plot.plotOpts().
+       // 		title("Right Ascension of Ascending Node").
+       // 		legend(Plot.LegendFormat.BOTTOM)).
+      //  	xAxis("x", Plot.axisOpts()).
+      //  	yAxis("y", Plot.axisOpts()).
+      //  	series(null, data,
+      //  		Plot.seriesOpts().
+      //  			color(Color.BLACK));
+      //  try {
+      //  	plot.save("plots/PlotTest", "png");
+      //  }
+      //  catch (IOException e){
+      //          System.out.println("An error occurred.");
+      //          e.printStackTrace();
+      //        }
 		}
 		
 		catch (OrekitException oe) {
