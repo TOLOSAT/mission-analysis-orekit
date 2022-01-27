@@ -150,7 +150,6 @@ public class NumericalTest {
         TestStepHandler() {
             //private constructor
         }
-        //FileWriter myWriter;
 
         /** {@inheritDoc} */
         @Override
