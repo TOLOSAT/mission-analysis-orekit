@@ -77,6 +77,7 @@ public class NumericalTest {
             final AbsoluteDate initialDate = new AbsoluteDate(2024,07,02,12,0,0,TimeScalesFactory.getUTC());
 
             // Initial orbit
+            final double RE = 6378.e3;
             final double a = 6878.e3; // semi major axis in meters
             final double e = 2.e-2; // eccentricity
             final double i = 97.4009688*Math.PI/180; // inclination
@@ -144,6 +145,13 @@ public class NumericalTest {
             BasicPlot plotter = new BasicPlot(); //creating plotter class
             List<Double> AList = orbitList.stream().map(KeplerianOrbit::getA).collect(Collectors.toList());
             plotter.plot(AList, "Semi Major Axis" ,"NumericalA");	
+            
+          //  List<Double> AltList = orbitList.stream().map(KeplerianOrbit::getA).forEachOrdered(null);
+            ArrayList<Double> AltList = new ArrayList<>();
+            for (double r : AList) {
+            	AltList.add(r-RE);
+            }
+            plotter.plot(AltList, "Altitude" ,"NumericalAlt");	
             
             List<Double> EList = orbitList.stream().map(KeplerianOrbit::getE).collect(Collectors.toList());
             plotter.plot(EList, "Eccentricity" ,"NumericalE");	
