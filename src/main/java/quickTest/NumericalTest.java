@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import org.hipparchus.ode.nonstiff.AdaptiveStepsizeIntegrator;
 import org.hipparchus.ode.nonstiff.DormandPrince853Integrator;
@@ -85,7 +87,7 @@ public class NumericalTest {
                           inertialFrame, initialDate, mu);
 
             int datastep = 100; // in seconds (timeStep between recorded data on textfile)
-    		int duration = 1600*86400;// in seconds
+    		int duration = 365*86400;// in seconds
             
             // Initial state definition
             final SpacecraftState initialState = new SpacecraftState(initialOrbit);
@@ -120,10 +122,15 @@ public class NumericalTest {
 
             // Set up a step handler
             propagator.getMultiplexer().add(60., new TestStepHandler());
-
+            
+            //List<Double> ArgPerList = new ArrayList<>();
+            
             // Extrapolate from the initial to the final date
             final SpacecraftState finalState = propagator.propagate(initialDate.shiftedBy(duration));
             final KeplerianOrbit o = (KeplerianOrbit) OrbitType.KEPLERIAN.convertType(finalState.getOrbit());
+            
+            
+            
             System.out.format(Locale.US, "Final state:%n%s %12.3f %10.8f %10.6f %10.6f %10.6f %10.6f%n",
                               finalState.getDate(),
                               o.getA(), o.getE(),
@@ -133,6 +140,22 @@ public class NumericalTest {
                               FastMath.toDegrees(o.getTrueAnomaly()));
             
             new WriteToFile("output/numericaltest.txt",datastep);
+            
+            BasicPlot plotter = new BasicPlot(); //creating plotter class
+            List<Double> AList = orbitList.stream().map(KeplerianOrbit::getA).collect(Collectors.toList());
+            plotter.plot(AList, "Semi Major Axis" ,"NumericalA");	
+            
+            List<Double> EList = orbitList.stream().map(KeplerianOrbit::getE).collect(Collectors.toList());
+            plotter.plot(EList, "Eccentricity" ,"NumericalE");	
+            
+            List<Double> IList = orbitList.stream().map(KeplerianOrbit::getI).collect(Collectors.toList());
+            plotter.plot(IList, "Inclination" ,"NumericalI");	
+            
+            List<Double> APList = orbitList.stream().map(KeplerianOrbit::getPerigeeArgument).collect(Collectors.toList());
+            plotter.plot(APList, "Argument of the Perigee" ,"NumericalAP");	
+
+            List<Double> RaanList = orbitList.stream().map(KeplerianOrbit::getRightAscensionOfAscendingNode).collect(Collectors.toList());
+            plotter.plot(RaanList, "Right Ascension of Ascending Node" ,"NumericalRaan");	
             
         } catch (OrekitException oe) {
             System.err.println(oe.getLocalizedMessage());

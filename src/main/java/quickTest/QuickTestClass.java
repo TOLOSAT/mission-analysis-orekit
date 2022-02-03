@@ -30,31 +30,31 @@ import quickTest.Plot;
 
 public class QuickTestClass{
     
-	public static void plot(List<Double> yList, String plotName, String fileName) {
-		Plot.Data data = Plot.data();
-        int i=0;
-        for (double y:yList) {
-        	data.xy(i, y);
-        	i++;
-        }
-        
-        Plot plot = Plot.plot(Plot.plotOpts().
-        		title(plotName).
-        		legend(Plot.LegendFormat.BOTTOM)).
-        	xAxis("x", Plot.axisOpts()).
-        	yAxis("y", Plot.axisOpts()).
-        	series(null, data,
-        		Plot.seriesOpts().
-        			color(Color.BLACK));
-        try {
-        	plot.save("plots/" + fileName, "png");
-        }
-        catch (IOException e){
-                System.out.println("An error occurred.");
-                e.printStackTrace();
-              }
-        System.out.println("Successfully created plot " + fileName);
-	}
+//	public static void plot(List<Double> yList, String plotName, String fileName) {
+//		Plot.Data data = Plot.data();
+//        int i=0;
+//        for (double y:yList) {
+//        	data.xy(i, y);
+//        	i++;
+//        }
+//        
+//        Plot plot = Plot.plot(Plot.plotOpts().
+//        		title(plotName).
+//        		legend(Plot.LegendFormat.BOTTOM)).
+//        	xAxis("x", Plot.axisOpts()).
+ //       	yAxis("y", Plot.axisOpts()).
+ //       	series(null, data,
+ //       		Plot.seriesOpts().
+ //       			color(Color.BLACK));
+ //       try {
+ //       	plot.save("plots/" + fileName, "png");
+//        }
+//        catch (IOException e){
+//                System.out.println("An error occurred.");
+//                e.printStackTrace();
+//              }
+//        System.out.println("Successfully created plot " + fileName);
+//	}
 	public static void main(String[] args) {
 		try {
 
@@ -153,19 +153,20 @@ public class QuickTestClass{
             System.out.println("An error occurred.");
             e.printStackTrace();
           }
+        BasicPlot plotter = new BasicPlot(); //creating plotter class
         List<Double> AList = orbitList.stream().map(KeplerianOrbit::getA).collect(Collectors.toList());
-        plot(AList, "Semi Major Axis" ,"AnalyticalA");	
+        plotter.plot(AList, "Semi Major Axis" ,"AnalyticalA");	
         
         List<Double> EList = orbitList.stream().map(KeplerianOrbit::getE).collect(Collectors.toList());
-        plot(EList, "Eccentricity" ,"AnalyticalE");	
+        plotter.plot(EList, "Eccentricity" ,"AnalyticalE");	
         
         List<Double> IList = orbitList.stream().map(KeplerianOrbit::getI).collect(Collectors.toList());
-        plot(IList, "Inclination" ,"AnalyticalI");	
+        plotter.plot(IList, "Inclination" ,"AnalyticalI");	
         
-        plot(ArgPerList, "Argument of the Perigee" ,"AnalyticalAP");	
+        plotter.plot(ArgPerList, "Argument of the Perigee" ,"AnalyticalAP");	
 
         List<Double> RaanList = orbitList.stream().map(KeplerianOrbit::getRightAscensionOfAscendingNode).collect(Collectors.toList());
-        plot(RaanList, "Right Ascension of Ascending Node" ,"AnalyticalRaan");						
+        plotter.plot(RaanList, "Right Ascension of Ascending Node" ,"AnalyticalRaan");						
         
         System.out.println("Successfully wrote to the file.");
       
