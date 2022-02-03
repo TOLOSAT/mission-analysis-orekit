@@ -92,7 +92,7 @@ public class QuickTestClass{
 		int duration =  365*86400;// in seconds
 		
 		//State Initialization
-		final SpacecraftState initialState = new SpacecraftState(initialOrbit);
+		//final SpacecraftState initialState = new SpacecraftState(initialOrbit);
 		
 		//Propagator definition as an Eckstein-Heckler Propagator 
 		final EcksteinHechlerPropagator propagator = new EcksteinHechlerPropagator(initialOrbit,
@@ -106,7 +106,7 @@ public class QuickTestClass{
 	
 
         // Propagation with storage of the results in an integrated ephemeris
-        final SpacecraftState finalState = propagator.propagate(initialDate.shiftedBy(duration));
+       // final SpacecraftState finalState = propagator.propagate(initialDate.shiftedBy(duration));
 	
 		
         //Create Ephemeris
