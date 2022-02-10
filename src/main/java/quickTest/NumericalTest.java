@@ -1,6 +1,7 @@
 package quickTest;
 
 import java.io.File;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,14 +12,23 @@ import java.util.stream.Collectors;
 import org.hipparchus.ode.nonstiff.AdaptiveStepsizeIntegrator;
 import org.hipparchus.ode.nonstiff.DormandPrince853Integrator;
 import org.hipparchus.util.FastMath;
+import org.orekit.bodies.CelestialBody;
+import org.orekit.bodies.CelestialBodyFactory;
+import org.orekit.bodies.OneAxisEllipsoid;
 import org.orekit.data.DataContext;
 import org.orekit.data.DataProvidersManager;
 import org.orekit.data.DirectoryCrawler;
 import org.orekit.errors.OrekitException;
 import org.orekit.forces.ForceModel;
+import org.orekit.forces.drag.DragForce;
+import org.orekit.forces.drag.DragSensitive;
+import org.orekit.forces.drag.IsotropicDrag;
 import org.orekit.forces.gravity.HolmesFeatherstoneAttractionModel;
 import org.orekit.forces.gravity.potential.GravityFieldFactory;
 import org.orekit.forces.gravity.potential.NormalizedSphericalHarmonicsProvider;
+import org.orekit.forces.radiation.IsotropicRadiationSingleCoefficient;
+import org.orekit.forces.radiation.RadiationSensitive;
+import org.orekit.forces.radiation.SolarRadiationPressure;
 import org.orekit.frames.Frame;
 import org.orekit.frames.FramesFactory;
 import org.orekit.orbits.KeplerianOrbit;
@@ -30,7 +40,11 @@ import org.orekit.propagation.numerical.NumericalPropagator;
 import org.orekit.propagation.sampling.OrekitFixedStepHandler;
 import org.orekit.time.AbsoluteDate;
 import org.orekit.time.TimeScalesFactory;
+import org.orekit.utils.Constants;
 import org.orekit.utils.IERSConventions;
+import org.orekit.models.earth.atmosphere.*;
+
+
 
 /** Based on the Orekit tutorial for numerical orbit propagation
  * <p>This tutorial shows the interest of the "step handling" mode which hides the complex
@@ -72,12 +86,17 @@ public class NumericalTest {
 
             // inertial frame
             final Frame inertialFrame = FramesFactory.getEME2000();
-
+            
+            // Load Celestial bodies
+            // ---------------------
+            final CelestialBody   sun   = CelestialBodyFactory.getSun();
+            final CelestialBody   earthPos = CelestialBodyFactory.getEarthMoonBarycenter();
+            
             // Initial date
             final AbsoluteDate initialDate = new AbsoluteDate(2024,07,02,12,0,0,TimeScalesFactory.getUTC());
 
             // Initial orbit
-            final double RE = 6378.e3;
+            final double RE = Constants.EIGEN5C_EARTH_EQUATORIAL_RADIUS;
             final double a = 6878.e3; // semi major axis in meters
             final double e = 2.e-2; // eccentricity
             final double i = 97.4009688*Math.PI/180; // inclination
@@ -88,10 +107,11 @@ public class NumericalTest {
                           inertialFrame, initialDate, mu);
 
             int datastep = 100; // in seconds (timeStep between recorded data on textfile)
-    		int duration = 365*86400;// in seconds
-            
+    		int duration = 500*86400;// in seconds
+            double  mass= 2.66;
+    		
             // Initial state definition
-            final SpacecraftState initialState = new SpacecraftState(initialOrbit);
+            final SpacecraftState initialState = new SpacecraftState(initialOrbit, mass);
 
             // Adaptive step integrator with a minimum step of 0.01 and a maximum step of 1000
             final double minStep = 0.01;
@@ -111,13 +131,33 @@ public class NumericalTest {
             final NormalizedSphericalHarmonicsProvider provider =
                     GravityFieldFactory.getNormalizedProvider(10, 10);
             final ForceModel holmesFeatherstone =
-                    new HolmesFeatherstoneAttractionModel(FramesFactory.getITRF(IERSConventions.IERS_2010,
-                                                                                true),
-                                                          provider);
-     
-            // Add force model to the propagator
+                    new HolmesFeatherstoneAttractionModel(FramesFactory.getITRF(IERSConventions.IERS_2010,true),provider);
             propagator.addForceModel(holmesFeatherstone);
-
+            
+            
+            //Models
+            final IERSConventions conventions = IERSConventions.IERS_2010;
+            final Frame earthFrame = FramesFactory.getITRF(conventions, false);
+            final OneAxisEllipsoid earth = new OneAxisEllipsoid(Constants.WGS84_EARTH_EQUATORIAL_RADIUS,
+                    Constants.WGS84_EARTH_FLATTENING,
+                    earthFrame);
+            
+            // Atmosphere
+            final HarrisPriester atmos = new HarrisPriester(sun,earth);
+            
+            // Drag
+            double crossArea = 0.025;
+            double Cd = 2.2;
+            DragSensitive ssc = new IsotropicDrag(crossArea, Cd);
+            propagator.addForceModel(new DragForce(atmos, ssc));
+           
+            // Solar Radiation Pressure
+            double cR = 1.8;
+            double srpArea = 0.025;
+            final RadiationSensitive ssrc = new IsotropicRadiationSingleCoefficient(srpArea, cR);
+            propagator.addForceModel(new SolarRadiationPressure(CelestialBodyFactory.getSun(), RE, ssrc));
+            
+            
             // Set up initial state in the propagator
             propagator.setInitialState(initialState);
 
@@ -149,7 +189,7 @@ public class NumericalTest {
           //  List<Double> AltList = orbitList.stream().map(KeplerianOrbit::getA).forEachOrdered(null);
             ArrayList<Double> AltList = new ArrayList<>();
             for (double r : AList) {
-            	AltList.add(r-RE);
+            	AltList.add(r-6378e3);
             }
             plotter.plot(AltList, "Altitude" ,"NumericalAlt");	
             
