@@ -32,6 +32,7 @@ import org.orekit.forces.radiation.SolarRadiationPressure;
 import org.orekit.frames.Frame;
 import org.orekit.frames.FramesFactory;
 import org.orekit.orbits.KeplerianOrbit;
+import org.orekit.orbits.CircularOrbit;
 import org.orekit.orbits.Orbit;
 import org.orekit.orbits.OrbitType;
 import org.orekit.orbits.PositionAngle;
@@ -107,19 +108,19 @@ public class NumericalTest {
                           inertialFrame, initialDate, mu);
 
             int datastep = 100; // in seconds (timeStep between recorded data on textfile)
-    		int duration = 500*86400;// in seconds
+    		int duration = 1400*86400;// in seconds
             double  mass= 2.66;
     		
             // Initial state definition
             final SpacecraftState initialState = new SpacecraftState(initialOrbit, mass);
-
+            final CircularOrbit initialCirc = (CircularOrbit) OrbitType.CIRCULAR.convertType(initialOrbit);
             // Adaptive step integrator with a minimum step of 0.01 and a maximum step of 1000
             final double minStep = 0.01;
             final double maxstep = 1000.0;
             final double positionTolerance = 10.0;
-            final OrbitType propagationType = OrbitType.KEPLERIAN;
+            final OrbitType propagationType = OrbitType.CIRCULAR;
             final double[][] tolerances =
-                    NumericalPropagator.tolerances(positionTolerance, initialOrbit, propagationType);
+                    NumericalPropagator.tolerances(positionTolerance, initialCirc, propagationType);
             final AdaptiveStepsizeIntegrator integrator =
                     new DormandPrince853Integrator(minStep, maxstep, tolerances[0], tolerances[1]);
 
