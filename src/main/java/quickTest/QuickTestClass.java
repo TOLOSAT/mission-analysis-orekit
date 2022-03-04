@@ -1,7 +1,8 @@
 package quickTest;
 
 
-import java.awt.Color;
+
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -26,35 +27,10 @@ import org.orekit.time.AbsoluteDate;
 import org.orekit.time.TimeScalesFactory;
 import org.orekit.utils.Constants;
 
-import quickTest.Plot;
 
 public class QuickTestClass{
     
-//	public static void plot(List<Double> yList, String plotName, String fileName) {
-//		Plot.Data data = Plot.data();
-//        int i=0;
-//        for (double y:yList) {
-//        	data.xy(i, y);
-//        	i++;
-//        }
-//        
-//        Plot plot = Plot.plot(Plot.plotOpts().
-//        		title(plotName).
-//        		legend(Plot.LegendFormat.BOTTOM)).
-//        	xAxis("x", Plot.axisOpts()).
- //       	yAxis("y", Plot.axisOpts()).
- //       	series(null, data,
- //       		Plot.seriesOpts().
- //       			color(Color.BLACK));
- //       try {
- //       	plot.save("plots/" + fileName, "png");
-//        }
-//        catch (IOException e){
-//                System.out.println("An error occurred.");
-//                e.printStackTrace();
-//              }
-//        System.out.println("Successfully created plot " + fileName);
-//	}
+
 	public static void main(String[] args) {
 		try {
 
@@ -79,8 +55,6 @@ public class QuickTestClass{
 	 	
 		double	inc = 94*Math.PI/180;//CL_op_ssoJ2("i", sma, ecc);
 		double	pom = Math.PI/2;
-		double	mlh = 6; // MLTAN (hours)
-		double	cjd0 = 1;//CL_dat_cal2cjd(2024,07,02,12,0,0); //year, month day
 	    double	gom = 1;//CL_op_locTime(cjd0, "mlh", mlh, "ra")
 		double	anm = 0;
 		

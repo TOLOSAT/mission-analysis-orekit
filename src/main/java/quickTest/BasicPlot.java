@@ -4,6 +4,10 @@ import java.awt.Color;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Simple plot generator from a list of Doubles, using Yuriy Guskov's simple-java-plot
+ */
+
 public class BasicPlot {
 	 BasicPlot(){
 	 }

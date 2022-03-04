@@ -91,7 +91,7 @@ public class NumericalTest {
             // Load Celestial bodies
             // ---------------------
             final CelestialBody   sun   = CelestialBodyFactory.getSun();
-            final CelestialBody   earthPos = CelestialBodyFactory.getEarthMoonBarycenter();
+          
             
             // Initial date
             final AbsoluteDate initialDate = new AbsoluteDate(2024,07,02,12,0,0,TimeScalesFactory.getUTC());
@@ -108,7 +108,7 @@ public class NumericalTest {
                           inertialFrame, initialDate, mu);
 
             int datastep = 100; // in seconds (timeStep between recorded data on textfile)
-    		int duration = 1400*86400;// in seconds
+    		int duration = 100*86400;// in seconds
             double  mass= 2.66;
     		
             // Initial state definition
@@ -156,7 +156,7 @@ public class NumericalTest {
             double cR = 1.8;
             double srpArea = 0.025;
             final RadiationSensitive ssrc = new IsotropicRadiationSingleCoefficient(srpArea, cR);
-            propagator.addForceModel(new SolarRadiationPressure(CelestialBodyFactory.getSun(), RE, ssrc));
+            propagator.addForceModel(new SolarRadiationPressure(sun, RE, ssrc));
             
             
             // Set up initial state in the propagator
@@ -165,32 +165,20 @@ public class NumericalTest {
             // Set up a step handler
             propagator.getMultiplexer().add(60., new TestStepHandler());
             
-            //List<Double> ArgPerList = new ArrayList<>();
             
             // Extrapolate from the initial to the final date
             final SpacecraftState finalState = propagator.propagate(initialDate.shiftedBy(duration));
-            final KeplerianOrbit o = (KeplerianOrbit) OrbitType.KEPLERIAN.convertType(finalState.getOrbit());
             
-            
-            
-            System.out.format(Locale.US, "Final state:%n%s %12.3f %10.8f %10.6f %10.6f %10.6f %10.6f%n",
-                              finalState.getDate(),
-                              o.getA(), o.getE(),
-                              FastMath.toDegrees(o.getI()),
-                              FastMath.toDegrees(o.getPerigeeArgument()),
-                              FastMath.toDegrees(o.getRightAscensionOfAscendingNode()),
-                              FastMath.toDegrees(o.getTrueAnomaly()));
             
             new WriteToFile("output/numericaltest.txt",datastep);
             
             BasicPlot plotter = new BasicPlot(); //creating plotter class
             List<Double> AList = orbitList.stream().map(KeplerianOrbit::getA).collect(Collectors.toList());
             plotter.plot(AList, "Semi Major Axis" ,"NumericalA");	
-            
-          //  List<Double> AltList = orbitList.stream().map(KeplerianOrbit::getA).forEachOrdered(null);
+
             ArrayList<Double> AltList = new ArrayList<>();
             for (double r : AList) {
-            	AltList.add(r-6378e3);
+            	AltList.add(r-RE);
             }
             plotter.plot(AltList, "Altitude" ,"NumericalAlt");	
             
@@ -211,9 +199,8 @@ public class NumericalTest {
         }
     }
 
-    /** Specialized step handler.
-     * <p>This class extends the step handler in order to print on the output stream at the given step.<p>
-     * @author Pascal Parraud
+    /* Step Handler
+     * Introduces oscullating orbital elements into a list
      */
     private static class TestStepHandler implements OrekitFixedStepHandler {
 
@@ -226,23 +213,12 @@ public class NumericalTest {
         /** {@inheritDoc} */
         @Override
         public void init(final SpacecraftState s0, final AbsoluteDate t, final double step) {
-        		 System.out.println("File initialized");
-        		 System.out.println("          date                a           e" +
-                               "           i         \u03c9          \u03a9" +
-                               "          \u03bd");
         }
 
         /** {@inheritDoc} */
         @Override
         public void handleStep(final SpacecraftState currentState) {
             final KeplerianOrbit o = (KeplerianOrbit) OrbitType.KEPLERIAN.convertType(currentState.getOrbit());
-            //System.out.format(Locale.US, "%s %12.3f %10.8f %10.6f %10.6f %10.6f %10.6f%n",
-              //                currentState.getDate(),
-              //                o.getA(), o.getE(),
-              //                FastMath.toDegrees(o.getI()),
-              //                FastMath.toDegrees(o.getPerigeeArgument()),
-              //                FastMath.toDegrees(o.getRightAscensionOfAscendingNode()),
-              //                FastMath.toDegrees(o.getTrueAnomaly()));
             orbitList.add(o);
         }
 
