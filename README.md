@@ -4,7 +4,9 @@ This is Tolosat's Orekit project.
 
 ## Plotting test
 
-![Argument of the ascending node plot](plots/NumericalAP.png)
+This is the altitude degradation acording to Orekit's Numerical Propagator
+
+![Argument of the ascending node plot](plots/NumericalAlt.png)
 
 ## License
 
