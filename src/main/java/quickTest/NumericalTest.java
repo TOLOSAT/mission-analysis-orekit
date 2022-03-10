@@ -104,7 +104,7 @@ public class NumericalTest {
                           inertialFrame, initialDate, mu);
 
             int datastep = 100; // Interval between recorded data points on output file
-    		int duration = 100*86400;// in seconds
+    		int duration = 500*86400;// in seconds
             double  mass= 2.66;
     		
             // Initial state definition
@@ -124,7 +124,7 @@ public class NumericalTest {
             final NumericalPropagator propagator = new NumericalPropagator(integrator);
             propagator.setOrbitType(propagationType);
 
-            // Force Model (reduced to perturbing gravity field)
+            // Gravity Field Force Model
             final NormalizedSphericalHarmonicsProvider provider =
                     GravityFieldFactory.getNormalizedProvider(10, 10);
             final ForceModel holmesFeatherstone =
@@ -159,9 +159,9 @@ public class NumericalTest {
             propagator.setInitialState(initialState);
 
             // Set up a step handler
-            propagator.getMultiplexer().add(60., new TestStepHandler());
+            propagator.getMultiplexer().add(8600, new TestStepHandler());
             
-            
+            //60.,
             // Extrapolate from the initial to the final date
             propagator.propagate(initialDate.shiftedBy(duration));
             
