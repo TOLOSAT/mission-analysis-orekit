@@ -66,7 +66,6 @@ public class QuickTestClass{
 		int duration =  365*86400;// in seconds
 		
 		//State Initialization
-		//final SpacecraftState initialState = new SpacecraftState(initialOrbit);
 		
 		//Propagator definition as an Eckstein-Heckler Propagator 
 		final EcksteinHechlerPropagator propagator = new EcksteinHechlerPropagator(initialOrbit,
@@ -80,7 +79,6 @@ public class QuickTestClass{
 	
 
         // Propagation with storage of the results in an integrated ephemeris
-       // final SpacecraftState finalState = propagator.propagate(initialDate.shiftedBy(duration));
 	
 		
         //Create Ephemeris
@@ -128,44 +126,23 @@ public class QuickTestClass{
             e.printStackTrace();
           }
         BasicPlot plotter = new BasicPlot(); //creating plotter class
-        List<Double> AList = orbitList.stream().map(KeplerianOrbit::getA).collect(Collectors.toList());
+        
+        List<Double> AList = orbitList.stream().map(KeplerianOrbit::getA).collect(Collectors.toList()); //Semi-major Axis
         plotter.plot(AList, "Semi Major Axis" ,"AnalyticalA");	
         
-        List<Double> EList = orbitList.stream().map(KeplerianOrbit::getE).collect(Collectors.toList());
+        List<Double> EList = orbitList.stream().map(KeplerianOrbit::getE).collect(Collectors.toList()); //Eccentricity
         plotter.plot(EList, "Eccentricity" ,"AnalyticalE");	
         
-        List<Double> IList = orbitList.stream().map(KeplerianOrbit::getI).collect(Collectors.toList());
+        List<Double> IList = orbitList.stream().map(KeplerianOrbit::getI).collect(Collectors.toList()); //Inclination
         plotter.plot(IList, "Inclination" ,"AnalyticalI");	
         
-        plotter.plot(ArgPerList, "Argument of the Perigee" ,"AnalyticalAP");	
+        plotter.plot(ArgPerList, "Argument of the Perigee" ,"AnalyticalAP"); //Argument of the Perigee
 
-        List<Double> RaanList = orbitList.stream().map(KeplerianOrbit::getRightAscensionOfAscendingNode).collect(Collectors.toList());
+        List<Double> RaanList = orbitList.stream().map(KeplerianOrbit::getRightAscensionOfAscendingNode).collect(Collectors.toList()); //Rigth Ascension of the Ascending Node
         plotter.plot(RaanList, "Right Ascension of Ascending Node" ,"AnalyticalRaan");						
         
         System.out.println("Successfully wrote to the file.");
-      
-        //Plot.Data data = Plot.data();
-       // int i=0;
-       // for (KeplerianOrbit o:orbitList) {
-       // 	data.xy(i, o.getRightAscensionOfAscendingNode());
-       // 	i++;
-       // }
-        
-       // Plot plot = Plot.plot(Plot.plotOpts().
-       // 		title("Right Ascension of Ascending Node").
-       // 		legend(Plot.LegendFormat.BOTTOM)).
-      //  	xAxis("x", Plot.axisOpts()).
-      //  	yAxis("y", Plot.axisOpts()).
-      //  	series(null, data,
-      //  		Plot.seriesOpts().
-      //  			color(Color.BLACK));
-      //  try {
-      //  	plot.save("plots/PlotTest", "png");
-      //  }
-      //  catch (IOException e){
-      //          System.out.println("An error occurred.");
-      //          e.printStackTrace();
-      //        }
+     
 		}
 		
 		catch (OrekitException oe) {

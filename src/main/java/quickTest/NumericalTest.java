@@ -48,10 +48,6 @@ import org.orekit.models.earth.atmosphere.*;
 
 
 /** Based on the Orekit tutorial for numerical orbit propagation
- * <p>This tutorial shows the interest of the "step handling" mode which hides the complex
- * internal mechanic of the propagation and just fulfills the user main needs.<p>
- * @author Fabien Maussion
- * @author Pascal Parraud
  */
 public class NumericalTest {
 
@@ -107,7 +103,7 @@ public class NumericalTest {
             final Orbit initialOrbit = new KeplerianOrbit(a, e, i, omega, raan, lM, PositionAngle.MEAN,
                           inertialFrame, initialDate, mu);
 
-            int datastep = 100; // in seconds (timeStep between recorded data on textfile)
+            int datastep = 100; // Interval between recorded data points on output file
     		int duration = 100*86400;// in seconds
             double  mass= 2.66;
     		
@@ -167,7 +163,7 @@ public class NumericalTest {
             
             
             // Extrapolate from the initial to the final date
-            final SpacecraftState finalState = propagator.propagate(initialDate.shiftedBy(duration));
+            propagator.propagate(initialDate.shiftedBy(duration));
             
             
             new WriteToFile("output/numericaltest.txt",datastep);
