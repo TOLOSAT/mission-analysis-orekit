@@ -2,9 +2,19 @@
 
 This is Tolosat's Orekit project.
 
-## Plotting test
+## Propagator Comparison
 
-This is the altitude degradation acording to Orekit's Numerical Propagator
+Below is the comparison of the altitude degradation according to the Orekit propagator choice:
+
+Analytical:
+
+![Argument of the ascending node plot](plots/AnalyticalAlt.png)
+
+Semi-Analytical:
+
+![Argument of the ascending node plot](plots/DSSTAlt.png)
+
+Numerical:
 
 ![Argument of the ascending node plot](plots/NumericalAlt.png)
 
