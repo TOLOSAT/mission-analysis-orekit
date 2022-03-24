@@ -46,6 +46,7 @@ import org.orekit.time.TimeScalesFactory;
 import org.orekit.utils.Constants;
 import org.orekit.utils.IERSConventions;
 import org.orekit.models.earth.atmosphere.*;
+import org.orekit.models.earth.atmosphere.data.MarshallSolarActivityFutureEstimation;
 
 
 
@@ -144,7 +145,10 @@ public class NumericalTest {
                     earthFrame);
             
             // Atmosphere
-            final HarrisPriester atmos = new HarrisPriester(sun,earth);
+            //final HarrisPriester atmos = new HarrisPriester(sun,earth);
+            
+            final MarshallSolarActivityFutureEstimation parameters = new MarshallSolarActivityFutureEstimation(MarshallSolarActivityFutureEstimation.DEFAULT_SUPPORTED_NAMES, MarshallSolarActivityFutureEstimation.StrengthLevel.AVERAGE);
+            final NRLMSISE00 atmos = new NRLMSISE00(parameters, sun, earth);
             
             // Drag
             double crossArea = 0.025;

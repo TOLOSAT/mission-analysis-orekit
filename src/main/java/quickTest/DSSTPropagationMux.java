@@ -46,6 +46,8 @@ import org.orekit.propagation.semianalytical.dsst.forces.DSSTSolarRadiationPress
 import org.orekit.propagation.semianalytical.dsst.forces.DSSTTesseral;
 import org.orekit.propagation.semianalytical.dsst.forces.DSSTZonal;
 import org.orekit.propagation.events.AltitudeDetector;
+import org.orekit.models.earth.atmosphere.data.MarshallSolarActivityFutureEstimation;
+import org.orekit.models.earth.atmosphere.NRLMSISE00;
 
 
 public class DSSTPropagationMux {
@@ -138,7 +140,10 @@ public static void main(final String[] args) {
          
          
          // Atmosphere
-         final HarrisPriester atmos = new HarrisPriester(sun,earth);
+         //final HarrisPriester atmos = new HarrisPriester(sun,earth);
+         
+         final MarshallSolarActivityFutureEstimation parameters = new MarshallSolarActivityFutureEstimation(MarshallSolarActivityFutureEstimation.DEFAULT_SUPPORTED_NAMES, MarshallSolarActivityFutureEstimation.StrengthLevel.AVERAGE);
+         final NRLMSISE00 atmos = new NRLMSISE00(parameters, sun, earth);
          
          // Drag
          double crossArea = 0.025;
