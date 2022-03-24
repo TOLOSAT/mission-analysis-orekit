@@ -50,7 +50,8 @@ public class QuickTestClass{
         
         
         final AbsoluteDate initialDate = new AbsoluteDate(2024,07,02,12,0,0, TimeScalesFactory.getUTC());
-		double 	sma = 6878.e3;   //sma = 6903.1363e3
+        final double RE = Constants.EIGEN5C_EARTH_EQUATORIAL_RADIUS;
+        double 	sma = 6878.e3;   //sma = 6903.1363e3
 	 	double	ecc = 2.e-2; //0.02535084
 	 	
 		double	inc = 94*Math.PI/180;//CL_op_ssoJ2("i", sma, ecc);
@@ -129,6 +130,12 @@ public class QuickTestClass{
         
         List<Double> AList = orbitList.stream().map(KeplerianOrbit::getA).collect(Collectors.toList()); //Semi-major Axis
         plotter.plot(AList, "Semi Major Axis" ,"AnalyticalA");	
+        
+        ArrayList<Double> AltList = new ArrayList<>();
+        for (double r : AList) {
+        	AltList.add(r-RE);
+        }
+        plotter.plot(AltList, "Altitude" ,"AnalyticalAlt");
         
         List<Double> EList = orbitList.stream().map(KeplerianOrbit::getE).collect(Collectors.toList()); //Eccentricity
         plotter.plot(EList, "Eccentricity" ,"AnalyticalE");	
