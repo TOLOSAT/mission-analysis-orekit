@@ -37,6 +37,8 @@ import org.orekit.orbits.Orbit;
 import org.orekit.orbits.OrbitType;
 import org.orekit.orbits.PositionAngle;
 import org.orekit.propagation.SpacecraftState;
+import org.orekit.propagation.events.AltitudeDetector;
+import org.orekit.propagation.events.EventDetector;
 import org.orekit.propagation.numerical.NumericalPropagator;
 import org.orekit.propagation.sampling.OrekitFixedStepHandler;
 import org.orekit.time.AbsoluteDate;
@@ -60,6 +62,8 @@ public class NumericalTest {
      * @param args program arguments (unused here)
      */
     static ArrayList<KeplerianOrbit> orbitList = new ArrayList<>();
+    
+    static AbsoluteDate initialDate = new AbsoluteDate();
     
     public static void main(final String[] args) {
         try {
@@ -90,7 +94,7 @@ public class NumericalTest {
           
             
             // Initial date
-            final AbsoluteDate initialDate = new AbsoluteDate(2024,07,02,12,0,0,TimeScalesFactory.getUTC());
+            initialDate = new AbsoluteDate(2024,07,02,12,0,0,TimeScalesFactory.getUTC());
 
             // Initial orbit
             final double RE = Constants.EIGEN5C_EARTH_EQUATORIAL_RADIUS;
@@ -104,7 +108,7 @@ public class NumericalTest {
                           inertialFrame, initialDate, mu);
 
             int datastep = 100; // Interval between recorded data points on output file
-    		int duration = 500*86400;// in seconds
+    		int duration = 1600*86400;// in seconds
             double  mass= 2.66;
     		
             // Initial state definition
@@ -161,7 +165,13 @@ public class NumericalTest {
             // Set up a step handler
             propagator.getMultiplexer().add(8600, new TestStepHandler());
             
-            //60.,
+            
+            // Stopping when altitude too low
+            
+            final double MinAlt = 140000;
+            final EventDetector LowAlt = new AltitudeDetector(MinAlt, earth);
+            propagator.addEventDetector(LowAlt);
+            
             // Extrapolate from the initial to the final date
             propagator.propagate(initialDate.shiftedBy(duration));
             
@@ -169,26 +179,34 @@ public class NumericalTest {
             new WriteToFile("output/numericaltest.txt",datastep);
             
             BasicPlot plotter = new BasicPlot(); //creating plotter class
+            List<AbsoluteDate> DateList = orbitList.stream().map(KeplerianOrbit::getDate).collect(Collectors.toList());
+            
+            List<Double> TimeList =  new ArrayList<>();
+            
+            for (AbsoluteDate D : DateList) {
+             	TimeList.add(D.durationFrom(initialDate)/(24*3600));
+             }
+            
             List<Double> AList = orbitList.stream().map(KeplerianOrbit::getA).collect(Collectors.toList());
-            plotter.plot(AList, "Semi Major Axis" ,"NumericalA");	
-
+            plotter.plot(TimeList, AList, "Semi Major Axis" ,"NumericalA");	            
+        
             ArrayList<Double> AltList = new ArrayList<>();
             for (double r : AList) {
             	AltList.add(r-RE);
             }
-            plotter.plot(AltList, "Altitude" ,"NumericalAlt");	
+            plotter.plot(TimeList, AltList, "Altitude" ,"NumericalAlt");	
             
             List<Double> EList = orbitList.stream().map(KeplerianOrbit::getE).collect(Collectors.toList());
-            plotter.plot(EList, "Eccentricity" ,"NumericalE");	
+            plotter.plot(TimeList, EList, "Eccentricity" ,"NumericalE");	
             
             List<Double> IList = orbitList.stream().map(KeplerianOrbit::getI).collect(Collectors.toList());
-            plotter.plot(IList, "Inclination" ,"NumericalI");	
+            plotter.plot(TimeList, IList, "Inclination" ,"NumericalI");	
             
             List<Double> APList = orbitList.stream().map(KeplerianOrbit::getPerigeeArgument).collect(Collectors.toList());
-            plotter.plot(APList, "Argument of the Perigee" ,"NumericalAP");	
+            plotter.plot(TimeList, APList, "Argument of the Perigee" ,"NumericalAP");	
 
             List<Double> RaanList = orbitList.stream().map(KeplerianOrbit::getRightAscensionOfAscendingNode).collect(Collectors.toList());
-            plotter.plot(RaanList, "Right Ascension of Ascending Node" ,"NumericalRaan");	
+            plotter.plot(TimeList, RaanList, "Right Ascension of Ascending Node" ,"NumericalRaan");	
             
         } catch (OrekitException oe) {
             System.err.println(oe.getLocalizedMessage());
@@ -232,12 +250,14 @@ public class NumericalTest {
      WriteToFile(String filename, int dataStep) {
     		 try {
     			 FileWriter myWriter = new FileWriter(filename);
+    			 myWriter.write("Time ; Semi-Major Axis ; Eccentricity ; Inclination ; Argument of the perigee ; Right Ascension of the Ascending node\n");
     			 int i = -1;
     			 int previ = 0;
     			 for(KeplerianOrbit o : orbitList) {
     				 i += 1;
     				 if( i-previ == 0 || i-previ == dataStep) {
-    					 myWriter.write(String.valueOf(o.getA()) + ";"
+    					 myWriter.write( String.valueOf(o.getDate().durationFrom(initialDate)) + ";"
+    						 +	String.valueOf(o.getA()) + ";"
     					     + String.valueOf(o.getE()) + ";" 
     					     + String.valueOf(FastMath.toDegrees(o.getI())) + ";" 
     					     + String.valueOf(FastMath.toDegrees(o.getPerigeeArgument())) + ";" 

@@ -30,8 +30,10 @@ import org.orekit.utils.Constants;
 
 public class QuickTestClass{
     
+	static AbsoluteDate initialDate = new AbsoluteDate();
 
 	public static void main(String[] args) {
+		
 		try {
 
             // configure Orekit
@@ -49,7 +51,7 @@ public class QuickTestClass{
         manager.addProvider(new DirectoryCrawler(orekitData));
         
         
-        final AbsoluteDate initialDate = new AbsoluteDate(2024,07,02,12,0,0, TimeScalesFactory.getUTC());
+        initialDate = new AbsoluteDate(2024,07,02,12,0,0, TimeScalesFactory.getUTC());
         final double RE = Constants.EIGEN5C_EARTH_EQUATORIAL_RADIUS;
         double 	sma = 6878.e3;   //sma = 6903.1363e3
 	 	double	ecc = 2.e-2; //0.02535084
@@ -64,7 +66,7 @@ public class QuickTestClass{
                 Constants.EIGEN5C_EARTH_MU);
 		
 		int time_step = 8600; // in seconds
-		int duration =  365*86400;// in seconds
+		int duration =  500*86400;// in seconds
 		
 		//State Initialization
 		
@@ -97,7 +99,7 @@ public class QuickTestClass{
         	
             FileWriter myWriter = new FileWriter("output/testfile.txt");
             //Writing Header
-            myWriter.write(" Semi-Major Axis ; Eccentricity ; Inclination ; Argument of the perigee ; Right Ascension of the Ascending node\n");
+            myWriter.write("Time ; Semi-Major Axis ; Eccentricity ; Inclination ; Argument of the perigee ; Right Ascension of the Ascending node\n");
             
             //Get values from ephemeris
         for (int i = 0; i < duration/time_step; i= i + 1)	{
@@ -118,7 +120,7 @@ public class QuickTestClass{
             ArgPerList.add(interArgPer);
             //Print to File
             System.out.println(orbitList.get(i).getA()); 
-            myWriter.write(String.valueOf(orbitList.get(i).getA()) + ";" + String.valueOf(orbitList.get(i).getE()) + ";" + String.valueOf(orbitList.get(i).getI()) + ";" + String.valueOf(interArgPer) + ";" + String.valueOf(orbitList.get(i).getRightAscensionOfAscendingNode()) + "\n");
+            myWriter.write(String.valueOf(orbitList.get(i).getDate().durationFrom(initialDate)) + ";" + String.valueOf(orbitList.get(i).getA()) + ";" + String.valueOf(orbitList.get(i).getE()) + ";" + String.valueOf(orbitList.get(i).getI()) + ";" + String.valueOf(interArgPer) + ";" + String.valueOf(orbitList.get(i).getRightAscensionOfAscendingNode()) + "\n");
         }
         myWriter.close();
         }
@@ -127,26 +129,33 @@ public class QuickTestClass{
             e.printStackTrace();
           }
         BasicPlot plotter = new BasicPlot(); //creating plotter class
+        List<AbsoluteDate> DateList = orbitList.stream().map(KeplerianOrbit::getDate).collect(Collectors.toList());
+        
+        List<Double> TimeList =  new ArrayList<>();
+        
+        for (AbsoluteDate D : DateList) {
+         	TimeList.add(D.durationFrom(initialDate)/(24*3600));
+         }
         
         List<Double> AList = orbitList.stream().map(KeplerianOrbit::getA).collect(Collectors.toList()); //Semi-major Axis
-        plotter.plot(AList, "Semi Major Axis" ,"AnalyticalA");	
+        plotter.plot(TimeList, AList, "Semi Major Axis" ,"AnalyticalA");	
         
         ArrayList<Double> AltList = new ArrayList<>();
         for (double r : AList) {
         	AltList.add(r-RE);
         }
-        plotter.plot(AltList, "Altitude" ,"AnalyticalAlt");
+        plotter.plot(TimeList, AltList, "Altitude" ,"AnalyticalAlt");
         
         List<Double> EList = orbitList.stream().map(KeplerianOrbit::getE).collect(Collectors.toList()); //Eccentricity
-        plotter.plot(EList, "Eccentricity" ,"AnalyticalE");	
+        plotter.plot(TimeList, EList, "Eccentricity" ,"AnalyticalE");	
         
         List<Double> IList = orbitList.stream().map(KeplerianOrbit::getI).collect(Collectors.toList()); //Inclination
-        plotter.plot(IList, "Inclination" ,"AnalyticalI");	
+        plotter.plot(TimeList, IList, "Inclination" ,"AnalyticalI");	
         
-        plotter.plot(ArgPerList, "Argument of the Perigee" ,"AnalyticalAP"); //Argument of the Perigee
+        plotter.plot(TimeList, ArgPerList, "Argument of the Perigee" ,"AnalyticalAP"); //Argument of the Perigee
 
         List<Double> RaanList = orbitList.stream().map(KeplerianOrbit::getRightAscensionOfAscendingNode).collect(Collectors.toList()); //Rigth Ascension of the Ascending Node
-        plotter.plot(RaanList, "Right Ascension of Ascending Node" ,"AnalyticalRaan");						
+        plotter.plot(TimeList, RaanList, "Right Ascension of Ascending Node" ,"AnalyticalRaan");						
         
         System.out.println("Successfully wrote to the file.");
      

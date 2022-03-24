@@ -34,6 +34,7 @@ import org.orekit.orbits.OrbitType;
 import org.orekit.orbits.PositionAngle;
 import org.orekit.propagation.PropagationType;
 import org.orekit.propagation.SpacecraftState;
+import org.orekit.propagation.events.EventDetector;
 import org.orekit.propagation.sampling.OrekitFixedStepHandler;
 import org.orekit.propagation.semianalytical.dsst.DSSTPropagator;
 import org.orekit.time.AbsoluteDate;
@@ -44,6 +45,7 @@ import org.orekit.propagation.semianalytical.dsst.forces.DSSTAtmosphericDrag;
 import org.orekit.propagation.semianalytical.dsst.forces.DSSTSolarRadiationPressure;
 import org.orekit.propagation.semianalytical.dsst.forces.DSSTTesseral;
 import org.orekit.propagation.semianalytical.dsst.forces.DSSTZonal;
+import org.orekit.propagation.events.AltitudeDetector;
 
 
 public class DSSTPropagationMux {
@@ -53,6 +55,8 @@ public class DSSTPropagationMux {
         // empty
     }
     static ArrayList<KeplerianOrbit> orbitList = new ArrayList<>();
+    
+    static AbsoluteDate initialDate = new AbsoluteDate();
     
 public static void main(final String[] args) {
 	 try {
@@ -83,7 +87,7 @@ public static void main(final String[] args) {
        
          
          // Initial date
-         final AbsoluteDate initialDate = new AbsoluteDate(2024,07,02,12,0,0,TimeScalesFactory.getUTC());
+         initialDate = new AbsoluteDate(2024,07,02,12,0,0,TimeScalesFactory.getUTC());
 
          // Initial orbit
          final double RE = Constants.EIGEN5C_EARTH_EQUATORIAL_RADIUS;
@@ -97,12 +101,13 @@ public static void main(final String[] args) {
                        inertialFrame, initialDate, mu);
 
         final double fixedStepSize = 2*Math.PI*Math.sqrt((a*a*a)/mu);
-        final int datastep = 100; // Interval between recorded data points on output file
- 		final int duration = 500*86400;// in seconds
+        final int datastep = 1; // Interval between recorded data points on output file
+ 		final int duration = 1600*86400;// in seconds
         final double  mass= 2.66;
         final AbsoluteDate start = initialOrbit.getDate();
 
          final double rotationRate = Constants.WGS84_EARTH_ANGULAR_VELOCITY;
+         
          
          
          // Defining the Propagator
@@ -148,6 +153,12 @@ public static void main(final String[] args) {
          propagator.addForceModel(new DSSTSolarRadiationPressure(sun, RE, ssrc, mu));
          
          
+         // Stopping when altitude too low
+         
+         final double MinAlt = 140000;
+         final EventDetector LowAlt = new AltitudeDetector(MinAlt, earth);
+         propagator.addEventDetector(LowAlt);
+         
          //Propagation
          
          propagator.getMultiplexer().add(8600, new TestStepHandler());
@@ -159,29 +170,37 @@ public static void main(final String[] args) {
          
 
          //Writing the results to a text file         
-         new WriteToFile("output/numericaltest.txt",datastep);
+         new WriteToFile("output/DSSTPropagation.txt",datastep);
          
          BasicPlot plotter = new BasicPlot(); //creating plotter class
+         List<AbsoluteDate> DateList = orbitList.stream().map(KeplerianOrbit::getDate).collect(Collectors.toList());
+         
+         List<Double> TimeList =  new ArrayList<>();
+         
+         for (AbsoluteDate D : DateList) {
+          	TimeList.add(D.durationFrom(initialDate)/(24*3600));
+          }
+         
          List<Double> AList = orbitList.stream().map(KeplerianOrbit::getA).collect(Collectors.toList());
-         plotter.plot(AList, "Semi Major Axis" ,"NumericalA");	
+         plotter.plot(TimeList, AList, "Semi Major Axis" ,"NumericalA");	
 
          ArrayList<Double> AltList = new ArrayList<>();
          for (double r : AList) {
          	AltList.add(r-RE);
          }
-         plotter.plot(AltList, "Altitude" ,"DSSTAlt");	
+         plotter.plot(TimeList, AltList, "Altitude" ,"DSSTAlt");	
          
          List<Double> EList = orbitList.stream().map(KeplerianOrbit::getE).collect(Collectors.toList()); //Eccentricity
-         plotter.plot(EList, "Eccentricity" ,"DSSTE");	
+         plotter.plot(TimeList, EList, "Eccentricity" ,"DSSTE");	
          
          List<Double> IList = orbitList.stream().map(KeplerianOrbit::getI).collect(Collectors.toList()); //Inclination
-         plotter.plot(IList, "Inclination" ,"DSSTI");	
+         plotter.plot(TimeList, IList, "Inclination" ,"DSSTI");	
 
          List<Double> APList = orbitList.stream().map(KeplerianOrbit::getPerigeeArgument).collect(Collectors.toList());
-         plotter.plot(APList, "Argument of the Perigee" ,"DSSTAP");	
+         plotter.plot(TimeList, APList, "Argument of the Perigee" ,"DSSTAP");	
 
          List<Double> RaanList = orbitList.stream().map(KeplerianOrbit::getRightAscensionOfAscendingNode).collect(Collectors.toList());
-         plotter.plot(RaanList, "Right Ascension of Ascending Node" ,"DSSTRaan");				
+         plotter.plot(TimeList, RaanList, "Right Ascension of Ascending Node" ,"DSSTRaan");				
          
          System.out.println("Successfully wrote to the file.");
       
@@ -226,12 +245,14 @@ private static class TestStepHandler implements OrekitFixedStepHandler {
     WriteToFile(String filename, int dataStep) {
    		 try {
    			 FileWriter myWriter = new FileWriter(filename);
+   			myWriter.write("Time ; Semi-Major Axis ; Eccentricity ; Inclination ; Argument of the perigee ; Right Ascension of the Ascending node\n");
    			 int i = -1;
    			 int previ = 0;
    			 for(KeplerianOrbit o : orbitList) {
    				 i += 1;
    				 if( i-previ == 0 || i-previ == dataStep) {
-   					 myWriter.write(String.valueOf(o.getA()) + ";"
+   					 myWriter.write( String.valueOf(o.getDate().durationFrom(initialDate)) + ";"
+   						 + String.valueOf(o.getA()) + ";"
    					     + String.valueOf(o.getE()) + ";" 
    					     + String.valueOf(FastMath.toDegrees(o.getI())) + ";" 
    					     + String.valueOf(FastMath.toDegrees(o.getPerigeeArgument())) + ";" 

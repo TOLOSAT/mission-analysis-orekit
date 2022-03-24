@@ -38,4 +38,32 @@ public class BasicPlot {
               }
         System.out.println("Successfully created plot " + fileName);
 	}
+	 
+	 public void plot(List<Double> xList, List<Double> yList, String plotName, String fileName) {
+		 
+			Plot.Data data = Plot.data();
+	        int i=0;
+	        for (double y:yList) {
+	        	data.xy(xList.get(i), y);
+	        	i++;
+	        }
+	        
+	        Plot plot = Plot.plot(Plot.plotOpts().
+	        		title(plotName).
+	        		legend(Plot.LegendFormat.BOTTOM)).
+	        	xAxis("x", Plot.axisOpts()).
+	        	yAxis("y", Plot.axisOpts()).
+	        	series(null, data,
+	        		Plot.seriesOpts().
+	        			color(Color.BLACK));
+	        try {
+	        	plot.save("plots/" + fileName, "png");
+	        }
+	        catch (IOException e){
+	                System.out.println("An error occurred.");
+	                e.printStackTrace();
+	              }
+	        System.out.println("Successfully created plot " + fileName);
+		}
+	 
 }
