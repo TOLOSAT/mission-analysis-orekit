@@ -6,13 +6,16 @@ This is Tolosat's Orekit project.
 
 Below is the comparison of the altitude degradation according to the Orekit propagator choice:
 
-#Analytical
+Analytical:
+
 ![Argument of the ascending node plot](plots/AnalyticalAlt.png)
 
-#Semi-Analytical
+Semi-Analytical:
+
 ![Argument of the ascending node plot](plots/DSSTAlt.png)
 
-#Numerical
+Numerical:
+
 ![Argument of the ascending node plot](plots/NumericalAlt.png)
 
 ## License
