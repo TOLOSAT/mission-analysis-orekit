@@ -2,6 +2,7 @@ package quickTest;
 
 import java.io.File;
 
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -187,25 +188,25 @@ public static void main(final String[] args) {
           }
          
          List<Double> AList = orbitList.stream().map(KeplerianOrbit::getA).collect(Collectors.toList());
-         plotter.plot(TimeList, AList, "Semi Major Axis" ,"NumericalA");	
+         plotter.plot(TimeList, AList, "Semi Major Axis" ,"NumericalA", "Semi-Analytical");	
 
          ArrayList<Double> AltList = new ArrayList<>();
          for (double r : AList) {
          	AltList.add(r-RE);
          }
-         plotter.plot(TimeList, AltList, "Altitude" ,"DSSTAlt");	
+         plotter.plot(TimeList, AltList, "Altitude" ,"DSSTAlt", "Semi-Analytical");	
          
          List<Double> EList = orbitList.stream().map(KeplerianOrbit::getE).collect(Collectors.toList()); //Eccentricity
-         plotter.plot(TimeList, EList, "Eccentricity" ,"DSSTE");	
+         plotter.plot(TimeList, EList, "Eccentricity" ,"DSSTE", "Semi-Analytical");	
          
          List<Double> IList = orbitList.stream().map(KeplerianOrbit::getI).collect(Collectors.toList()); //Inclination
-         plotter.plot(TimeList, IList, "Inclination" ,"DSSTI");	
+         plotter.plot(TimeList, IList, "Inclination" ,"DSSTI", "Semi-Analytical");	
 
          List<Double> APList = orbitList.stream().map(KeplerianOrbit::getPerigeeArgument).collect(Collectors.toList());
-         plotter.plot(TimeList, APList, "Argument of the Perigee" ,"DSSTAP");	
+         plotter.plot(TimeList, APList, "Argument of the Perigee" ,"DSSTAP", "Semi-Analytical");	
 
          List<Double> RaanList = orbitList.stream().map(KeplerianOrbit::getRightAscensionOfAscendingNode).collect(Collectors.toList());
-         plotter.plot(TimeList, RaanList, "Right Ascension of Ascending Node" ,"DSSTRaan");				
+         plotter.plot(TimeList, RaanList, "Right Ascension of Ascending Node" ,"DSSTRaan", "Semi-Analytical");				
          
          System.out.println("Successfully wrote to the file.");
       

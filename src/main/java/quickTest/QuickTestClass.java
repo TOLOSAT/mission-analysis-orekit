@@ -138,24 +138,24 @@ public class QuickTestClass{
          }
         
         List<Double> AList = orbitList.stream().map(KeplerianOrbit::getA).collect(Collectors.toList()); //Semi-major Axis
-        plotter.plot(TimeList, AList, "Semi Major Axis" ,"AnalyticalA");	
+        plotter.plot(TimeList, AList, "Semi Major Axis" ,"AnalyticalA", "Analytical");	
         
         ArrayList<Double> AltList = new ArrayList<>();
         for (double r : AList) {
         	AltList.add(r-RE);
         }
-        plotter.plot(TimeList, AltList, "Altitude" ,"AnalyticalAlt");
+        plotter.plot(TimeList, AltList, "Altitude" ,"AnalyticalAlt", "Analytical");
         
         List<Double> EList = orbitList.stream().map(KeplerianOrbit::getE).collect(Collectors.toList()); //Eccentricity
-        plotter.plot(TimeList, EList, "Eccentricity" ,"AnalyticalE");	
+        plotter.plot(TimeList, EList, "Eccentricity" ,"AnalyticalE", "Analytical");	
         
         List<Double> IList = orbitList.stream().map(KeplerianOrbit::getI).collect(Collectors.toList()); //Inclination
-        plotter.plot(TimeList, IList, "Inclination" ,"AnalyticalI");	
+        plotter.plot(TimeList, IList, "Inclination" ,"AnalyticalI", "Analytical");	
         
-        plotter.plot(TimeList, ArgPerList, "Argument of the Perigee" ,"AnalyticalAP"); //Argument of the Perigee
+        plotter.plot(TimeList, ArgPerList, "Argument of the Perigee" ,"AnalyticalAP", "Analytical"); //Argument of the Perigee
 
         List<Double> RaanList = orbitList.stream().map(KeplerianOrbit::getRightAscensionOfAscendingNode).collect(Collectors.toList()); //Rigth Ascension of the Ascending Node
-        plotter.plot(TimeList, RaanList, "Right Ascension of Ascending Node" ,"AnalyticalRaan");						
+        plotter.plot(TimeList, RaanList, "Right Ascension of Ascending Node" ,"AnalyticalRaan", "Analytical");						
         
         System.out.println("Successfully wrote to the file.");
      

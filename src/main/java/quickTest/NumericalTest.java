@@ -192,25 +192,25 @@ public class NumericalTest {
              }
             
             List<Double> AList = orbitList.stream().map(KeplerianOrbit::getA).collect(Collectors.toList());
-            plotter.plot(TimeList, AList, "Semi Major Axis" ,"NumericalA");	            
+            plotter.plot(TimeList, AList, "Semi Major Axis" ,"NumericalA", "Numerical");	            
         
             ArrayList<Double> AltList = new ArrayList<>();
             for (double r : AList) {
             	AltList.add(r-RE);
             }
-            plotter.plot(TimeList, AltList, "Altitude" ,"NumericalAlt");	
+            plotter.plot(TimeList, AltList, "Altitude" ,"NumericalAlt", "Numerical");	
             
             List<Double> EList = orbitList.stream().map(KeplerianOrbit::getE).collect(Collectors.toList());
-            plotter.plot(TimeList, EList, "Eccentricity" ,"NumericalE");	
+            plotter.plot(TimeList, EList, "Eccentricity" ,"NumericalE", "Numerical");	
             
             List<Double> IList = orbitList.stream().map(KeplerianOrbit::getI).collect(Collectors.toList());
-            plotter.plot(TimeList, IList, "Inclination" ,"NumericalI");	
+            plotter.plot(TimeList, IList, "Inclination" ,"NumericalI", "Numerical");	
             
             List<Double> APList = orbitList.stream().map(KeplerianOrbit::getPerigeeArgument).collect(Collectors.toList());
-            plotter.plot(TimeList, APList, "Argument of the Perigee" ,"NumericalAP");	
+            plotter.plot(TimeList, APList, "Argument of the Perigee" ,"NumericalAP", "Numerical");	
 
             List<Double> RaanList = orbitList.stream().map(KeplerianOrbit::getRightAscensionOfAscendingNode).collect(Collectors.toList());
-            plotter.plot(TimeList, RaanList, "Right Ascension of Ascending Node" ,"NumericalRaan");	
+            plotter.plot(TimeList, RaanList, "Right Ascension of Ascending Node" ,"NumericalRaan", "Numerical");	
             
         } catch (OrekitException oe) {
             System.err.println(oe.getLocalizedMessage());
