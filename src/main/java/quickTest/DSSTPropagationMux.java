@@ -3,6 +3,7 @@ package quickTest;
 import java.io.File;
 
 
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,6 +43,8 @@ import org.orekit.time.AbsoluteDate;
 import org.orekit.time.TimeScalesFactory;
 import org.orekit.utils.Constants;
 import org.orekit.utils.IERSConventions;
+
+
 import org.orekit.propagation.semianalytical.dsst.forces.DSSTAtmosphericDrag;
 import org.orekit.propagation.semianalytical.dsst.forces.DSSTSolarRadiationPressure;
 import org.orekit.propagation.semianalytical.dsst.forces.DSSTTesseral;
@@ -49,6 +52,17 @@ import org.orekit.propagation.semianalytical.dsst.forces.DSSTZonal;
 import org.orekit.propagation.events.AltitudeDetector;
 import org.orekit.models.earth.atmosphere.data.MarshallSolarActivityFutureEstimation;
 import org.orekit.models.earth.atmosphere.NRLMSISE00;
+import org.orekit.bodies.GeodeticPoint;
+import org.orekit.utils.PVCoordinates;
+
+import quickTest.PathCreator.AppFrame;
+
+import org.orekit.frames.Transform;
+import org.hipparchus.geometry.euclidean.threed.Vector3D;
+
+import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwindx.examples.ApplicationTemplate;
+
 
 
 public class DSSTPropagationMux {
@@ -58,6 +72,10 @@ public class DSSTPropagationMux {
         // empty
     }
     static ArrayList<KeplerianOrbit> orbitList = new ArrayList<>();
+    
+    static ArrayList<GeodeticPoint> listOfStates = new ArrayList<GeodeticPoint>();
+    
+    static OneAxisEllipsoid earth;
     
     static AbsoluteDate initialDate = new AbsoluteDate();
     
@@ -124,7 +142,7 @@ public static void main(final String[] args) {
        //Models
          final IERSConventions conventions = IERSConventions.IERS_2010;
          final Frame earthFrame = FramesFactory.getITRF(conventions, false);
-         final OneAxisEllipsoid earth = new OneAxisEllipsoid(Constants.WGS84_EARTH_EQUATORIAL_RADIUS,
+         earth = new OneAxisEllipsoid(Constants.WGS84_EARTH_EQUATORIAL_RADIUS,
                  Constants.WGS84_EARTH_FLATTENING,
                  earthFrame);
          
@@ -188,7 +206,7 @@ public static void main(final String[] args) {
           }
          
          List<Double> AList = orbitList.stream().map(KeplerianOrbit::getA).collect(Collectors.toList());
-         plotter.plot(TimeList, AList, "Semi Major Axis" ,"NumericalA", "Semi-Analytical");	
+         plotter.plot(TimeList, AList, "Semi Major Axis" ,"DSSTA", "Semi-Analytical");	
 
          ArrayList<Double> AltList = new ArrayList<>();
          for (double r : AList) {
@@ -210,7 +228,11 @@ public static void main(final String[] args) {
          
          System.out.println("Successfully wrote to the file.");
       
-         
+         //new PathCreator(listOfStates);
+         //System.setProperty("http.proxyHost", "proxy.isae.fr");
+         //System.setProperty("http.proxyPort", "3128");
+         //WorldWind.setOfflineMode(true);
+         //ApplicationTemplate.start("WorldWind Paths", AppFrame.class);
          
 }catch (OrekitException oe) {
     System.err.println(oe.getLocalizedMessage());
@@ -235,6 +257,15 @@ private static class TestStepHandler implements OrekitFixedStepHandler {
     public void handleStep(final SpacecraftState currentState) {
         final KeplerianOrbit o = (KeplerianOrbit) OrbitType.KEPLERIAN.convertType(currentState.getOrbit());
         orbitList.add(o);
+        
+        // compute sub-satellite track
+        AbsoluteDate  date    = currentState.getDate();
+        PVCoordinates pvInert = currentState.getPVCoordinates();
+        Transform t;
+			t = currentState.getFrame().getTransformTo(earth.getBodyFrame(), date);
+            Vector3D p = t.transformPosition(pvInert.getPosition());
+            GeodeticPoint center = earth.transform(p, earth.getBodyFrame(), date);
+            listOfStates.add(center);
     }
 
     /** {@inheritDoc} */
