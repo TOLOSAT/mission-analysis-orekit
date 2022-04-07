@@ -123,7 +123,7 @@ public static void main(final String[] args) {
 
         final double fixedStepSize = 2*Math.PI*Math.sqrt((a*a*a)/mu);
         final int datastep = 1; // Interval between recorded data points on output file
- 		final int duration = 1600*86400;// in seconds
+ 		final int duration = 160000*86400;// in seconds
         final double  mass= 2.66;
         final AbsoluteDate start = initialOrbit.getDate();
 
@@ -258,14 +258,14 @@ private static class TestStepHandler implements OrekitFixedStepHandler {
         final KeplerianOrbit o = (KeplerianOrbit) OrbitType.KEPLERIAN.convertType(currentState.getOrbit());
         orbitList.add(o);
         
-        // compute sub-satellite track
+       /* // compute sub-satellite track
         AbsoluteDate  date    = currentState.getDate();
         PVCoordinates pvInert = currentState.getPVCoordinates();
         Transform t;
 			t = currentState.getFrame().getTransformTo(earth.getBodyFrame(), date);
             Vector3D p = t.transformPosition(pvInert.getPosition());
             GeodeticPoint center = earth.transform(p, earth.getBodyFrame(), date);
-            listOfStates.add(center);
+            listOfStates.add(center); */
     }
 
     /** {@inheritDoc} */

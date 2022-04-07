@@ -203,18 +203,18 @@ public static void main(final String[] args) {
          BasicPlot plotter = new BasicPlot(); //creating plotter class
          
          List<Double> AList = orbitList.stream().map(KeplerianOrbit::getA).collect(Collectors.toList()); //Semi-major Axis
-         plotter.plot(AList, "Semi Major Axis" ,"DSSTA");	
+       //  plotter.plot(AList, "Semi Major Axis" ,"DSSTA");	
          
          List<Double> EList = orbitList.stream().map(KeplerianOrbit::getE).collect(Collectors.toList()); //Eccentricity
-         plotter.plot(EList, "Eccentricity" ,"DSSTE");	
+        // plotter.plot(EList, "Eccentricity" ,"DSSTE");	
          
          List<Double> IList = orbitList.stream().map(KeplerianOrbit::getI).collect(Collectors.toList()); //Inclination
-         plotter.plot(IList, "Inclination" ,"DSSTI");	
+        // plotter.plot(IList, "Inclination" ,"DSSTI");	
          
-         plotter.plot(ArgPerList, "Argument of the Perigee" ,"DSSTAP"); //Argument of the Perigee
+        // plotter.plot(ArgPerList, "Argument of the Perigee" ,"DSSTAP"); //Argument of the Perigee
 
          List<Double> RaanList = orbitList.stream().map(KeplerianOrbit::getRightAscensionOfAscendingNode).collect(Collectors.toList()); //Rigth Ascension of the Ascending Node
-         plotter.plot(RaanList, "Right Ascension of Ascending Node" ,"DSSTRaan");						
+         //plotter.plot(RaanList, "Right Ascension of Ascending Node" ,"DSSTRaan");						
          
          System.out.println("Successfully wrote to the file.");
       
